@@ -8,6 +8,9 @@ const logger = require("morgan");
 const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
 const mongoose = require("mongoose");
+const cors = require("cors")
+
+
 const app = express();
 
 /*
@@ -20,13 +23,23 @@ app.use(express.urlencoded({ extended: false })); // Access data sent as urlEnco
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+
+console.log(process.env.FRONTEND_URL)
 app.use(
-  session({
-    store: new MongoStore({ mongooseConnection: mongoose.connection }),
-    secret: process.env.SESSION_SECRET,
-    resave: true,
-    saveUninitialized: true,
-  })
+    cors({
+        origin: process.env.FRONTEND_URL,
+        credentials: true
+    })
+)
+
+
+app.use(
+    session({
+        store: new MongoStore({ mongooseConnection: mongoose.connection }),
+        secret: process.env.SESSION_SECRET,
+        resave: true,
+        saveUninitialized: true,
+    })
 );
 
 /*
@@ -36,9 +49,11 @@ app.use(
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const authRouter = require("./routes/auth");
+const itemRouter = require("./routes/item")
 
 app.use("/", indexRouter);
 app.use("/api/auth", authRouter);
-app.use("/api/users", usersRouter);
+app.use("/api/user", usersRouter);
+app.use("/api/items", itemRouter);
 
 module.exports = app;
