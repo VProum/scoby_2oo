@@ -1,19 +1,35 @@
 import React, { Component } from "react";
 import LocationAutoComplete from "../LocationAutoComplete";
 import "../../styles/form.css";
+import apiHandler from "../../api/apiHandler";
 
 class ItemForm extends Component {
-  state = {};
-
-  handleChange(event) {
-    console.log("Wax On Wax Off");
-    this.setState({});
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
   }
 
-  handleSubmit = (event) => {
+  state = {
+    name: "",
+    category: "Plant",
+    quantity: 0,
+    image:
+      "https://cdn1.iconfinder.com/data/icons/gardening-filled-line/614/1935_-_Growing_Plant-512.png",
+    location: null,
+  };
+
+  handleChange(event) {
+    //console.log(event.target.name, event.target.value);
+    this.setState({
+      [event.target.name]: event.target.value,
+    });
+  }
+
+  handleSubmit = async (event) => {
     event.preventDefault();
     console.log("Wax On Wax Off");
-
+    const apiResponse = await apiHandler.createNewItem(this.state);
+    console.log(apiResponse);
     // In order to send back the data to the client, since there is an input type file you have to send the
     // data as formdata.
     // The object that you'll be sending will maybe be a nested object, in order to handle nested objects in our form data
@@ -27,6 +43,9 @@ class ItemForm extends Component {
     // Take a look at the data and see what you can get from it.
     // Look at the item model to know what you should retrieve and set as state.
     console.log(place);
+    this.setState({
+      ["location"]: place.geometry,
+    });
   };
 
   render() {
@@ -44,6 +63,7 @@ class ItemForm extends Component {
               className="input"
               type="text"
               placeholder="What are you giving away ?"
+              name="name"
             />
           </div>
 
@@ -52,7 +72,7 @@ class ItemForm extends Component {
               Category
             </label>
 
-            <select id="category" defaultValue="-1">
+            <select id="category" defaultValue="-1" name="category">
               <option value="-1" disabled>
                 Select a category
               </option>
@@ -67,7 +87,12 @@ class ItemForm extends Component {
             <label className="label" htmlFor="quantity">
               Quantity
             </label>
-            <input className="input" id="quantity" type="number" />
+            <input
+              className="input"
+              id="quantity"
+              type="number"
+              name="quantity"
+            />
           </div>
 
           <div className="form-group">
@@ -85,6 +110,7 @@ class ItemForm extends Component {
               id="description"
               className="text-area"
               placeholder="Tell us something about this item"
+              name="description"
             ></textarea>
           </div>
 
@@ -102,10 +128,10 @@ class ItemForm extends Component {
               How do you want to be reached?
             </label>
             <div>
-              <input type="radio" />
+              <input type="radio" name="toto" />
               user email
             </div>
-            <input type="radio" />
+            <input type="radio" name="toto2" />
             contact phone number
           </div>
 
@@ -115,7 +141,9 @@ class ItemForm extends Component {
             personal page.
           </p>
 
-          <button className="btn-submit">Add Item</button>
+          <button className="btn-submit" onClick={this.handleSubmit}>
+            Add Item
+          </button>
         </form>
       </div>
     );

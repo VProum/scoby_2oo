@@ -1,11 +1,11 @@
 import React from "react";
+import Map from "./../components/Map"
 
 const Home = (props) => {
   // Implement react map box here.
   return (
     <div>
-      <h1>MAPBOX MAP HERE</h1>
-      <p>On home /</p>
+      <Map/>
     </div>
   );
 };
